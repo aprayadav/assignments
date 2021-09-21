@@ -1,0 +1,71 @@
+import java.util.*;
+import java.lang.*;
+
+
+
+class InvesntoryManagementSystem{
+public void printValue(String name, float price, String type, int quantity){
+System.out.println("Item Name- "+name);
+System.out.println("Item Price- "+price);
+System.out.println("Item Type- "+type);
+System.out.println("Item Quantity- "+quantity);
+}
+public float totalPrice(float taxPrice, float price){
+	
+	float finalprice = taxPrice + price;
+	return finalprice;
+}
+
+
+public float calculateTax(String type, float price, String name){
+	float totalTax = 0.0f;
+	float fixedPerc = 12.5f/100.0f;
+	if("raw".equalsIgnoreCase(type)){
+		
+		totalTax = price*fixedPerc;
+		return totalTax;
+		
+	}else if("manufactured".equalsIgnoreCase(type)){
+		totalTax = (price*fixedPerc)+2.0f/100.0f*(fixedPerc);
+		return totalTax;
+		
+	}else{
+		
+		float taxPrice  = (10.0f/100.0f)*price;
+		float finalPrice = totalPrice(taxPrice,price);
+		float finalImportedPrice = 0.0f;
+		
+		if(finalPrice<=100){
+		finalImportedPrice = taxPrice + 5;
+			
+		}else if(finalPrice>100 && finalPrice<=200){
+			finalImportedPrice = taxPrice + 10;
+		}else{
+		finalImportedPrice =taxPrice + ((5.0f/100.0f) * finalPrice);
+		}	
+		
+		
+		return finalImportedPrice;
+		
+	}
+	
+}
+
+
+public static void main(String args[]){
+InvesntoryManagementSystem obj = new InvesntoryManagementSystem();
+obj.printValue(args[0],Float.parseFloat(args[1]),args[2],Integer.parseInt(args[3]));
+
+
+float tax = obj.calculateTax(args[2],Float.parseFloat(args[1]),args[0]);
+System.out.println("Total sales tax liability of item "+args[0]+" is "+tax);
+
+
+float totalPriceOfItem = obj.totalPrice(tax,Float.parseFloat(args[1]));
+System.out.println("Total price of item "+args[0]+" is "+totalPriceOfItem);
+
+}
+
+
+
+}
