@@ -1,105 +1,136 @@
-/**
- * 
- */
-package practice;
+package com.assignments.assignment;
 
 import java.util.*;
-import java.lang.*;
 
-/**
- * 
- * 
- * main class to take item details like item name, item price, item type (raw,manufactured,imported) and item quantity
- *
- */
-public class item {
+enum ItemTypes {
+	  raw, manufactured, imported
+	}
 
-
-	String itemName;
-	float itemPrice;
-	String itemType;
-	int itmeQuantity;
-	float taxPrice;
-	float totalPrice;
+/** class to calculate final price and tax */
+class CalculateTaxData{
 	
-	/**method to take user input and call methods for tax calculation and price calculation*/
-	public void getItemDetails(){
+	static float totalTax = 0.0f;
+	static float fixedPerc = 12.5f/100.0f;
+	
+	/** method to calculate total price*/
+    public static float totalPriceCalculation(float taxPrice, float price){
+    	return taxPrice + price;
+    	
+	}
+    
+    /** method to calculate tax when type is raw*/
+	public static float calculateRawTypeTax(float price){
+		return price*fixedPerc;
 		
-		boolean validatePrice = false;
-		Scanner sc= new Scanner(System.in);
-		//taking input for item name
-		System.out.println("Enter item name");
-		itemName = sc.nextLine();
+	}
+	
+	/** method to calculate tax when type is manufactured*/
+	public static float calculateManufacturedTypeTax(float price){
+		return (price*fixedPerc)+2.0f/100.0f*(fixedPerc);
 		
-		//ask user to enter data until user enter correct data
-		while(!validatePrice){
-			//taking input for item price
-			System.out.println("Enter item price");
-			try{
-				itemPrice = Float.parseFloat(sc.nextLine());
-				validatePrice = true;
-			}catch(Exception e){
-				System.out.println("Please enter correct price value");
-			}
+	}
+	
+	/** method to calculate tax when type is imported*/
+	public static float calculateImportedTypeTax(float price){
+		float taxPrice  = (10.0f/100.0f)*price;
+		float finalPrice = totalPriceCalculation(taxPrice,price);
+		
+		if(finalPrice<=100){
+			totalTax = taxPrice + 5;
 			
+		}else if(finalPrice>100 && finalPrice<=200){
+			totalTax = taxPrice + 10;
+		}else{
+			totalTax =taxPrice + ((5.0f/100.0f) * finalPrice);
 		}
-		validatePrice = false;
-		//taking input for item type
-		System.out.println("Enter item type - Raw, Manufactured, Imported");
-		itemType = sc.nextLine();
-		while(itemType.isEmpty()){
-			System.out.println("please enter item type as it's mandatory field");
-			itemType = sc.nextLine();
-		}
-		
-		
-		//taking input for item quantity
-		while(!validatePrice){
-			System.out.println("Enter item quantity");
-			try{
-				itmeQuantity = Integer.parseInt(sc.nextLine());
-				validatePrice = true;
-			}catch(NumberFormatException e){
-				System.out.println("please enter correct item quantity");
-			}
-		}
-		
-		
-		totalprice total = new totalprice();// total price class object
-		
-		taxPrice = total.taxCalculation(itemName, itemPrice, itemType);//method to calculate tax per item
-		totalPrice = total.totalPriceCalculation(taxPrice, itemPrice);// method to calculate price per item
-		
-		printItemDetails();// method to print all the data of item
-		
+		return totalTax;
 	}
-	/** method to print all the data of item*/
-	public void printItemDetails(){
-		
-		System.out.println("Item Name- "+itemName);
-		System.out.println("Item Type- "+itemType);
-		System.out.println("Item Price- "+itemPrice);
-		System.out.println("Item Quantity- "+itmeQuantity);
-		System.out.println("Item Total Tax- "+taxPrice);
-		System.out.println("Item Price- "+totalPrice);
-		
-	}
-	public static void main(String[] args) {
-		
-		
-		item itemObj = new item();
-		itemObj.getItemDetails();
-		
-		//ask if user wants to enter more items details
-		System.out.println("Do you wish to enter more item details? yes/no");
-		Scanner sc= new Scanner(System.in);
-		String userChoice = sc.nextLine();
-		if("yes".equalsIgnoreCase(userChoice)){
-			itemObj.getItemDetails();
-		}
-			
-		
-		
-	}
+	
+}
 
+/**class to set item details and call appropriate tax calculation method on the basis of their types*/
+public class Item {
+
+	private String name;
+	private String type;
+	private float price;
+	private int quantity;
+	private float tax;
+	private float totalPrice;
+	
+	
+	public void setName(String name){
+		this.name = name;
+	}
+	
+	public void setType(String type){
+		this.type = type;
+	}
+	
+	public void setPrice(float price){
+		this.price = price;
+	}
+	
+	public void setQuantity(int quantity){
+		this.quantity = quantity;
+	}
+	
+	public void setTax(float tax){
+		this.tax = tax;
+	}
+	
+	public void setTotalPrice(float totalPrice){
+		this.totalPrice = totalPrice;
+	}
+	
+	public String getName(){
+		return name;
+	}
+	
+	public String getType(){
+		return type;
+	}
+	
+	public float getPrice(){
+		return price;
+	}
+	
+	public int getQuantity(){
+		return quantity;
+	}
+	
+	public float getTax(){
+		return tax;
+	}
+	
+	public float getTotalPrice(){
+		return totalPrice;
+	}
+	
+	
+	/** method to call appropriate method according to their type*/
+	public float calculateTax(){
+		
+		switch(type){
+		
+		case "raw":
+			tax =  CalculateTaxData.calculateRawTypeTax(price);
+			break;
+			
+		case "manufacture":
+			tax = CalculateTaxData.calculateManufacturedTypeTax(price);
+			break;
+			
+		case "imported":
+			tax = CalculateTaxData.calculateImportedTypeTax(price);
+			break;
+			
+		 default:		System.out.println("Please enter correct item type,this is wrong type "+type);
+			
+		
+		}
+		
+		return tax;
+		
+	}
 }
